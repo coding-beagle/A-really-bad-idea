@@ -9,9 +9,9 @@ started = True
 
 # starting parameters
 window_size_x = 840
-window_size_y = 606
+window_size_y = 660
 starting_posX = 26
-starting_posY = 26
+starting_posY = 26*3
 offset_x = 201
 offset_y = 301
 offset_x1 = 438
@@ -20,6 +20,9 @@ speed = 1
 rows = 6
 columns = 4
 hands = 24
+title1 = "Bangkok Time:"
+title2 = "Spokane Time:"
+time_difference = -14 #relative to your own time
 
 # wtf is this sh*t
 desired_angle = []
@@ -55,7 +58,6 @@ posX6 = []
 posY6 = []
 posX7 = []
 posY7 = []
-
 
 # Create a list of all of the centers of the circles
 for column in range(columns):
@@ -191,13 +193,18 @@ while started:
     current_time_wash = now.strftime("%H:%M")
     hours1, minutes1 = current_time_wash.split(":")
     hours1 = int(hours1)
-    hours1 -= 14
+    hours1 += time_difference
     while hours1 < 0:
         hours1 += 24
     if hours1 == 0:
         hours1 = "00"
+    # converts an hour with single digit to have two digits, e.g. 2:00 = 02:00
+    if len(str(hours1)) < 2:
+        hours1 = str(hours1) + "0"
+        hours1 = hours1[::-1]
     digits_minutes1 = [int(x) for x in str(minutes1)]
     digits_hours1 = [int(x) for x in str(hours1)]
+
 
     # create blank canvas
     blank = np.zeros((window_size_y, window_size_x), dtype=np.uint8)
@@ -256,6 +263,9 @@ while started:
         angle6 = randomize(48)
     if keyboard.is_pressed('8'):
         angle7 = randomize(48)
+
+    cv.putText(blank, f"{title1}", (10, 40), cv.FONT_HERSHEY_PLAIN, 3, 255, 3)
+    cv.putText(blank, f"{title2}", (450, 40), cv.FONT_HERSHEY_PLAIN, 3, 255, 3)
 
     # Display screen and break loop
     cv.imshow("Clock", blank)
