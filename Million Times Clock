@@ -1,0 +1,266 @@
+import numpy as np
+import cv2 as cv
+import math
+import keyboard
+import random
+from datetime import datetime
+
+started = True
+
+# starting parameters
+window_size_x = 840
+window_size_y = 606
+starting_posX = 26
+starting_posY = 26
+offset_x = 201
+offset_y = 301
+offset_x1 = 438
+offset_y1 = 301
+speed = 1
+rows = 6
+columns = 4
+hands = 24
+
+# wtf is this sh*t
+desired_angle = []
+angle = []
+desired_angle1 = []
+angle1 = []
+desired_angle2 = []
+angle2 = []
+desired_angle3 = []
+angle3 = []
+desired_angle4 = []
+angle4 = []
+desired_angle5 = []
+angle5 = []
+desired_angle6 = []
+angle6 = []
+desired_angle7 = []
+angle7 = []
+# seriously i dont remember if half of this sh*t is actually used
+posX = []
+posY = []
+posX1 = []
+posY1 = []
+posX2 = []
+posY2 = []
+posX3 = []
+posY3 = []
+posX4 = []
+posY4 = []
+posX5 = []
+posY5 = []
+posX6 = []
+posY6 = []
+posX7 = []
+posY7 = []
+
+
+# Create a list of all of the centers of the circles
+for column in range(columns):
+    posX.append(starting_posX + column * 50)
+    posX1.append((starting_posX + offset_x) + column * 50)
+    posX2.append(starting_posX + column * 50)
+    posX3.append((starting_posX + offset_x) + column * 50)
+    posX4.append(starting_posX + offset_x1 + column * 50)
+    posX5.append((starting_posX + offset_x + offset_x1 ) + column * 50)
+    posX6.append(starting_posX + offset_x1 + column * 50)
+    posX7.append((starting_posX + offset_x + offset_x1) + column * 50)
+    for row in range(rows):
+        posY.append(starting_posY + row * 50)
+        posY1.append(starting_posY + row * 50)
+        posY2.append((starting_posY + offset_y) + row * 50)
+        posY3.append((starting_posY + offset_y) + row * 50)
+        posY4.append(starting_posY + row * 50)
+        posY5.append(starting_posY + row * 50)
+        posY6.append((starting_posY + offset_y) + row * 50)
+        posY7.append((starting_posY + offset_y) + row * 50)
+
+
+# function to return list of random angles
+def randomize(amount):
+    output = []
+    for number in range(amount):
+        output.append(random.randint(0, 359))
+    return output
+
+
+def draw_circles(list_x, list_y, angle_list):
+    counter = 0
+    for column in range(columns):
+        for row in range(rows):
+            cv.circle(blank, (list_x[column], list_y[row]), 25, 80, 2)
+            draw_hands(list_x[column], list_y[row], angle_list[counter], angle_list[counter + 1])
+            counter += 2
+
+
+def update_hands(angle_list, desired_angle_list):
+    counter1 = -1
+    for angles in angle_list:
+        counter1 += 1
+        if angles < desired_angle_list[counter1]:
+            angle_list[counter1] += speed
+        elif angles > desired_angle_list[counter1]:
+            angle_list[counter1] -= speed
+    return angle_list
+
+
+# Generate random angles for all hands
+for line in range(hands*2):
+    angle = randomize(hands*2)
+    angle1 = randomize(hands*2)
+    angle2 = randomize(hands*2)
+    angle3 = randomize(hands*2)
+    angle4 = randomize(hands*2)
+    angle5 = randomize(hands*2)
+    angle6 = randomize(hands*2)
+    angle7 = randomize(hands*2)
+
+
+def draw_hands(x,y, angle1, angle2):
+    cv.line(blank, (x, y), (int(x + math.sin(math.radians(angle1)) * 25), int(y - math.cos(math.radians(angle1)) * 25)),255, 2)
+    cv.line(blank, (x, y), (int(x + math.sin(math.radians(angle2)) * 25), int(y - math.cos(math.radians(angle2)) * 25)),255, 2)
+
+
+# oh god oh f*ck what the
+# list of hard coded angles wtf who wrote this POS code
+def set_number(num):
+        if num == 0:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 180, 0, 180, 0, 90,
+                             270, 90, 90, 180, 0, 180, 0, 180, 90, 0, 270, 90,
+                             270, 90, 180, 270, 180, 0, 0, 180, 270, 0, 270, 90,
+                             180, 270, 180, 0, 180, 0, 180, 0, 180, 0, 0, 270]
+        elif num == 1:
+            desired_angle = [180, 90, 0, 90, 225, 225, 225, 225, 90, 180, 0, 90,
+                             270, 90, 180, 270, 0, 180, 0, 180, 270, 0, 270, 90,
+                             270, 180, 180, 0, 180, 0, 0, 180, 0, 90, 270, 90,
+                             225, 225, 225, 225, 225, 225, 225, 225, 180, 270, 0, 270]
+        elif num == 2:
+            desired_angle = [180, 90, 0, 90, 90, 180, 0, 180, 0, 180, 0, 90,
+                             270, 90, 90, 270, 90, 270, 90, 180, 90, 0, 270, 90,
+                             270, 90, 180, 270, 270, 0, 90, 270, 270, 90, 270, 90,
+                             180, 270, 180, 0, 180, 0, 0, 270, 180, 270, 0, 270]
+        elif num == 3:
+            desired_angle = [180, 90, 0, 90, 90, 180, 90, 0, 90, 180, 0, 90,
+                             270, 90, 90, 270, 90, 270, 270, 90, 90, 270, 270,
+                             90, 270, 90, 180, 270, 270, 0, 180, 270, 270, 0, 270,
+                             90, 180, 270, 180, 0, 180, 0, 0, 180, 0, 180, 0, 270]
+        elif num == 4:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 90, 225, 225, 225, 225,
+                             270, 180, 180, 0, 0, 90, 90, 270, 225, 225, 225, 225,
+                             90, 180, 180, 0, 270, 0, 270, 180, 0, 180, 0, 90,
+                             270, 180, 180, 0, 180, 0, 180, 0, 180, 0, 0, 270]
+        elif num == 5:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 90, 90, 180, 0, 90,
+                             270, 90, 90, 180, 0, 90, 90, 270, 270, 90, 270, 90,
+                             90, 270, 270, 90, 270, 90, 270, 180, 270, 0, 270, 90,
+                             270, 180, 270, 0, 180, 270, 180, 0, 180, 0, 0, 270]
+        elif num == 6:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 180, 0, 180, 0, 90,
+                             270, 90, 90, 180, 0, 90, 90, 180, 0, 90, 270, 90,
+                             90, 270, 270, 90, 270, 90, 270, 180, 270, 0, 270, 90,
+                             270, 180, 270, 0, 180, 270, 180, 0, 180, 0, 0, 270]
+        elif num == 7:
+            desired_angle = [180, 90, 0, 90, 225, 225, 225, 225, 225, 225, 225, 225,
+                             270, 90, 90, 270, 225, 225, 225, 225, 225, 225, 225, 225,
+                             270, 90, 180, 270, 180, 0, 180, 0, 180, 0, 0, 90,
+                             180, 270, 180, 0, 180, 0, 0, 180, 0, 180, 0, 270]
+        elif num == 8:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 180, 0, 180, 0, 90,
+                             270, 90, 90, 180, 0, 90, 90, 180, 90, 0, 270, 90,
+                             270, 90, 180, 270, 270, 0, 180, 270, 270, 0, 270, 90,
+                             180, 270, 180, 0, 180, 0, 180, 0, 180, 0, 0, 270]
+        elif num == 9:
+            desired_angle = [180, 90, 0, 180, 0, 180, 0, 90, 90, 180, 0, 90,
+                             270, 90, 90, 180, 0, 90, 90, 270, 90, 270, 270, 90,
+                             270, 90, 180, 270, 270, 0, 180, 270, 270, 0, 270, 90,
+                             180, 270, 180, 0, 180, 0, 180, 0, 180, 0, 0, 270]
+        return(desired_angle)
+
+
+while started:
+    # current time as two lists w/ digits
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+    hours, minutes = current_time.split(":")
+    digits_minutes = [int(x) for x in str(minutes)]
+    digits_hours = [int(x) for x in str(hours)]
+
+    # current time in TZ -7 w/ janky conversion
+    current_time_wash = now.strftime("%H:%M")
+    hours1, minutes1 = current_time_wash.split(":")
+    hours1 = int(hours1)
+    hours1 -= 14
+    while hours1 < 0:
+        hours1 += 24
+    if hours1 == 0:
+        hours1 = "00"
+    digits_minutes1 = [int(x) for x in str(minutes1)]
+    digits_hours1 = [int(x) for x in str(hours1)]
+
+    # create blank canvas
+    blank = np.zeros((window_size_y, window_size_x), dtype=np.uint8)
+
+    # returns a list of angles corresponding to the input digit
+    # current time
+    desired_angle = set_number(digits_hours[0])
+    desired_angle1 = set_number(digits_hours[1])
+    desired_angle2 = set_number(digits_minutes[0])
+    desired_angle3 = set_number(digits_minutes[1])
+    # second TZ
+    desired_angle4 = set_number(digits_hours1[0])
+    desired_angle5 = set_number(digits_hours1[1])
+    desired_angle6 = set_number(digits_minutes[0])
+    desired_angle7 = set_number(digits_minutes[1])
+
+    # draw clock faces
+    draw_circles(posX, posY, angle)
+    draw_circles(posX1, posY1, angle1)
+    draw_circles(posX2, posY2, angle2)
+    draw_circles(posX3, posY3, angle3)
+    draw_circles(posX4, posY4, angle4)
+    draw_circles(posX5, posY5, angle5)
+    draw_circles(posX6, posY6, angle6)
+    draw_circles(posX7, posY7, angle7)
+
+    # animate clock hands
+    angle = update_hands(angle, desired_angle)
+    angle1 = update_hands(angle1, desired_angle1)
+    angle2 = update_hands(angle2, desired_angle2)
+    angle3 = update_hands(angle3, desired_angle3)
+    angle4 = update_hands(angle4, desired_angle4)
+    angle5 = update_hands(angle5, desired_angle5)
+    angle6 = update_hands(angle6, desired_angle6)
+    angle7 = update_hands(angle7, desired_angle7)
+
+    # Code to scramble clock faces
+    if keyboard.is_pressed('s'):
+        angle = randomize(48)
+        angle1 = randomize(48)
+        angle2 = randomize(48)
+        angle3 = randomize(48)
+    if keyboard.is_pressed('1'):
+        angle = randomize(48)
+    if keyboard.is_pressed('2'):
+        angle1 = randomize(48)
+    if keyboard.is_pressed('3'):
+        angle2 = randomize(48)
+    if keyboard.is_pressed('4'):
+        angle3 = randomize(48)
+    if keyboard.is_pressed('5'):
+        angle4 = randomize(48)
+    if keyboard.is_pressed('6'):
+        angle5 = randomize(48)
+    if keyboard.is_pressed('7'):
+        angle6 = randomize(48)
+    if keyboard.is_pressed('8'):
+        angle7 = randomize(48)
+
+    # Display screen and break loop
+    cv.imshow("Clock", blank)
+    if cv.waitKey(1) & keyboard.is_pressed('*'):
+        started = False
+        break
+
+cv.destroyAllWindows()
